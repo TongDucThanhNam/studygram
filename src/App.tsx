@@ -10,38 +10,38 @@ const palette = [
 	{ name: "Ink", hex: "#1F2937" },
 ];
 
-const steps = [
-	{
-		num: "01",
-		title: "Xác định mục tiêu",
-		body: "Trang này để ôn gì? Bullet keypoint hay flashcard? Viết mục tiêu lên đầu trang để giữ focus.",
-		color: "bg-amber-200 text-amber-900",
-	},
-	{
-		num: "02",
-		title: "Chọn palette",
-		body: "2–3 màu pastel cố định + màu mực đậm. Đừng đổi màu mỗi đoạn kẻo loạn.",
-		color: "bg-rose-200 text-rose-900",
-	},
-	{
-		num: "03",
-		title: "Kẻ layout",
-		body: "Phác nhanh block heading, body, hình, quote. Xoay nhẹ 1–2 block để có cảm giác handmade.",
-		color: "bg-sky-200 text-sky-900",
-	},
-	{
-		num: "04",
-		title: "Viết + highlight",
-		body: "Viết nội dung trước, highlight sau. Dùng 1 màu highlight cho keyword chính để mắt đỡ mệt.",
-		color: "bg-emerald-200 text-emerald-900",
-	},
-	{
-		num: "05",
-		title: "Doodle + tape",
-		body: "Thêm tape, sticker, doodle nhỏ dẫn mắt. Ít mà chất, không rải sticker vô tội vạ.",
-		color: "bg-violet-200 text-violet-900",
-	},
-];
+// const steps = [
+// 	{
+// 		num: "01",
+// 		title: "Xác định mục tiêu",
+// 		body: "Trang này để ôn gì? Bullet keypoint hay flashcard? Viết mục tiêu lên đầu trang để giữ focus.",
+// 		color: "bg-amber-200 text-amber-900",
+// 	},
+// 	{
+// 		num: "02",
+// 		title: "Chọn palette",
+// 		body: "2–3 màu pastel cố định + màu mực đậm. Đừng đổi màu mỗi đoạn kẻo loạn.",
+// 		color: "bg-rose-200 text-rose-900",
+// 	},
+// 	{
+// 		num: "03",
+// 		title: "Kẻ layout",
+// 		body: "Phác nhanh block heading, body, hình, quote. Xoay nhẹ 1–2 block để có cảm giác handmade.",
+// 		color: "bg-sky-200 text-sky-900",
+// 	},
+// 	{
+// 		num: "04",
+// 		title: "Viết + highlight",
+// 		body: "Viết nội dung trước, highlight sau. Dùng 1 màu highlight cho keyword chính để mắt đỡ mệt.",
+// 		color: "bg-emerald-200 text-emerald-900",
+// 	},
+// 	{
+// 		num: "05",
+// 		title: "Doodle + tape",
+// 		body: "Thêm tape, sticker, doodle nhỏ dẫn mắt. Ít mà chất, không rải sticker vô tội vạ.",
+// 		color: "bg-violet-200 text-violet-900",
+// 	},
+// ];
 
 const pillars = [
 	{
