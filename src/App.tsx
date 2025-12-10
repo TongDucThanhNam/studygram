@@ -250,10 +250,10 @@ export default function App() {
 						<div className="flex flex-wrap gap-3">
 							<button
 								type="button"
-								className="hand-button bg-amber-200 text-amber-900"
+								className="hand-button bg-green-500/90 text-yellow-400 "
 								onClick={handleCopyPrompt}
 							>
-								Copy Studygram prompt
+								Copy Studygram prompt Free
 							</button>
 						</div>
 					</div>
