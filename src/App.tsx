@@ -223,7 +223,7 @@ export default function App() {
 							Studygram notebook UI • V0.0.1
 						</div>
 						<h1 className="max-w-2xl font-hand text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-							Từ prompt đến UI chuẩn
+							Từ prompt đến UI theo phong cách
 							<span className="scribble-underline"> Studygram</span>
 						</h1>
 						<p className="max-w-xl text-base leading-relaxed text-slate-700">
