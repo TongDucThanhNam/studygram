@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studygram Visual Culture — Hướng dẫn sáng tạo góc học & note đẹp</title>
+  <meta name="description"
+    content="Tìm hiểu Studygram là gì, các yếu tố thị giác cốt lõi và cách thiết kế góc học, vở note, chuẩn phong cách Studygram." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Rough.js for hand-drawn borders -->
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Patrick Hand"', '"Mali"', 'system-ui', 'sans-serif'],
+            display: ['"Mali"', 'cursive'],
+            note: ['"Patrick Hand"', '"Mali"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+          colors: {
+            paper: { light: '#f9f0e5', DEFAULT: '#f3e7d6' },
+            ink: { DEFAULT: '#111827' },
+            accent: { pink: '#ff9aa2', blue: '#8ec5fc', yellow: '#ffe29f', green: '#a8e6cf' },
+          },
+          boxShadow: { soft: '0 18px 45px rgba(15,23,42,0.22)' },
+          backgroundImage: {
+            'paper-texture': 'radial-gradient(circle at 1px 1px, rgba(148,124,96,0.22) 1px, transparent 0)',
+            'gradient-hero': 'linear-gradient(135deg, #f9e8d9 0%, #fce5f1 40%, #dbeafe 100%)',
+            'gradient-dark': 'radial-gradient(circle at top left, #334155 0, transparent 55%), radial-gradient(circle at bottom right, #020617 0, transparent 60%)',
+          },
+          animation: { 'float-slow': 'float 10s ease-in-out infinite', 'fade-in-up': 'fadeInUp 0.7s ease-out forwards' },
+          keyframes: {
+            float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+            fadeInUp: { '0%': { opacity: 0, transform: 'translateY(16px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Mali:wght@400;600;700&family=Patrick+Hand:wght@400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      color-scheme: light;
+    }
+
+    html,
+    body {
+      scroll-behavior: smooth;
+      background-color: #f9f0e5;
+      background-image: url("https://www.transparenttextures.com/patterns/lined-paper-2.png");
+      font-family: 'Patrick Hand', 'Mali', system-ui, sans-serif;
+      color: #1f2937;
+      text-rendering: optimizeLegibility;
+      letter-spacing: 0.01em;
+    }
+
+    .paper-card {
+      background-color: #fffaf3;
+      background-image: radial-gradient(circle at 1px 1px, rgba(148, 124, 96, 0.16) 1.5px, transparent 0);
+      background-size: 20px 20px;
+    }
+
+    .texture-grid {
+      background-color: #FFFFFF;
+      background-image: linear-gradient(rgba(148, 163, 184, 0.35) 2px, transparent 0), linear-gradient(90deg, rgba(148, 163, 184, 0.35) 2px, transparent 0);
+      background-size: 22px 22px, 22px 22px;
+    }
+
+    .dot-grid {
+      background-image: radial-gradient(#d7c2a8 0.9px, transparent 0.9px);
+      background-size: 18px 18px;
+    }
+
+    .note-line {
+      background-image: repeating-linear-gradient(#e6d8c7 0, #e6d8c7 1px, transparent 1px, transparent 26px);
+    }
+
+    .washi-tape {
+      position: absolute;
+      left: 50%;
+      top: -15px;
+      width: 100px;
+      height: 30px;
+      background-color: rgba(255, 100, 100, 0.3);
+      opacity: 0.8;
+      transform: translateX(-50%) rotate(-1deg);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      z-index: 20;
+    }
+
+    .sticky-note {
+      position: relative;
+      width: min(260px, 100%);
+      min-height: 180px;
+      padding: 32px 18px 20px;
+      background-color: #fff9c4;
+      color: #333;
+      font-size: 1rem;
+      line-height: 1.5;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      transform: rotate(-2deg);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sticky-note:hover {
+      transform: scale(1.03) rotate(0deg) !important;
+      box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .rounded-hand {
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+
+    .sticky-note::after {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 25px;
+      background-color: rgba(255, 100, 100, 0.3);
+      opacity: 0.7;
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .note-blue {
+      background-color: #e1f5fe;
+    }
+
+    .note-pink {
+      background-color: #f8bbd0;
+    }
+
+    .rotate-left {
+      transform: rotate(-3deg);
+    }
+
+    .rotate-right {
+      transform: rotate(2deg);
+    }
+
+    .tape-cross::after {
+      transform: translateX(-50%) rotate(-5deg);
+    }
+
+    .sticky-pin {
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 9999px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Hand-drawn card */
+    .hand-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      border: 3px solid #0f172a;
+      background-color: #fdfbf7;
+      transition: all 0.3s ease;
+      box-shadow: 6px 6px 0px #000000;
+    }
+
+    .hand-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .hand-card.shadow-ink {
+      box-shadow: 6px 6px 0px #0f172a;
+    }
+
+    .hand-card.shadow-rose {
+      box-shadow: 6px 6px 0px #f43f5e;
+    }
+
+    .hand-card.shadow-amber {
+      box-shadow: 6px 6px 0px #f59e0b;
+    }
+
+    .hand-card.shadow-sky {
+      box-shadow: 6px 6px 0px #0ea5e9;
+    }
+
+    .hand-card.shadow-emerald {
+      box-shadow: 6px 6px 0px #10b981;
+    }
+
+    .hand-card.bg-dot-grid {
+      background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+    }
+
+    .hand-card-inner {
+      pointer-events: none;
+      position: absolute;
+      inset: 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(226, 232, 240, 0.6);
+      z-index: 1;
+    }
+
+    .hand-card-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Hand-drawn fieldset callout */
+    .hand-fieldset {
+      width: 100%;
+      margin: 16px 0;
+      padding: 16px;
+      box-sizing: border-box;
+      background-color: transparent;
+      border: 4px solid #c084fc;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+
+    .hand-legend {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 16px;
+      padding: 0 12px;
+      font-family: 'Mali', cursive;
+      font-weight: 700;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+    }
+
+    .legend-icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background-color: #ffffff;
+      color: #9333ea;
+      border: 2px solid #a855f7;
+      border-radius: 9999px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .legend-title {
+      background-image: linear-gradient(to right, #9333ea, #e879f9);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      padding-bottom: 4px;
+    }
+
+    .hand-content {
+      font-size: 1rem;
+      color: #334155;
+      line-height: 1.625;
+      padding: 0 8px;
+    }
+
+    .hand-content p {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      color: #4b5563;
+    }
+
+    .polaroid {
+      background: white;
+      padding: 10px 10px 40px 10px;
+      box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+      transform: rotate(2deg);
+      width: 80%;
+      margin: 20px auto;
+      display: block;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    .polaroid-full {
+      width: 100%;
+      margin: 0;
+      display: block;
+    }
+
+    /* Typography scale inspired by sample */
+    .sg-typography h1,
+    .sg-typography h2,
+    .sg-typography h3,
+    .sg-typography h4,
+    .sg-typography h5,
+    .sg-typography h6 {
+      margin: 0.45em 0 0.12em;
+      letter-spacing: 0.01em;
+    }
+
+    .sg-typography h1 {
+      font-family: 'Dancing Script', 'Pacifico', cursive;
+      font-size: clamp(2.5rem, 4.2vw, 3.1rem);
+      color: #2b7fc3;
+      line-height: 1.05;
+    }
+
+    .sg-typography h2 {
+      font-family: 'Pacifico', cursive;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      font-size: clamp(2.1rem, 3.6vw, 2.6rem);
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 2px 2px 4px rgba(255, 107, 107, 0.2);
+      padding-bottom: 0.2em;
+      /* Ensure descenders/shadows aren't cut off */
+    }
+
+    .sg-typography h3 {
+      font-family: 'Mali', cursive;
+      font-weight: 700;
+      font-size: clamp(1.7rem, 3vw, 2rem);
+      color: #e6394a;
+    }
+
+    .sg-typography h4 {
+      font-family: 'Mali', cursive;
+      font-weight: 600;
+      font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+      color: #374151;
+    }
+
+    .sg-typography h5 {
+      font-family: 'Mali', cursive;
+      font-weight: 600;
+      font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+      color: #374151;
+    }
+
+    .sg-typography h6 {
+      font-family: 'Mali', cursive;
+      font-weight: 600;
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sg-typography .sg-subheading {
+      font-family: 'Mali', 'Patrick Hand', system-ui, sans-serif;
+      color: #c0344c;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-weight: 700;
+    }
+
+    .sg-typography p {
+      font-family: 'Patrick Hand', 'Mali', system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.78;
+      color: #374151;
+    }
+
+    .sg-typography strong {
+      font-weight: 800;
+      background: linear-gradient(120deg, rgba(255, 226, 159, 0.65) 0%, rgba(255, 218, 186, 0.65) 100%);
+      padding: 0.05em 0.1em;
+      border-radius: 6px;
+    }
+
+    .sg-typography em {
+      font-style: italic;
+      color: #c0344c;
+    }
+
+    .sg-typography code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+      background: #fef3c7;
+      color: #374151;
+      padding: 0.15em 0.35em;
+      border-radius: 10px;
+      border: 1px dashed rgba(0, 0, 0, 0.12);
+    }
+
+    .sg-highlight {
+      background: linear-gradient(180deg, transparent 55%, rgba(255, 226, 159, 0.65) 55%);
+      padding: 0.05em 0.12em;
+    }
+
+    .hl-yellow {
+      background: linear-gradient(to top, rgba(255, 245, 157, 0.9) 55%, transparent 55%);
+      padding: 0.02em 0.14em;
+    }
+
+    .hl-blue {
+      background: linear-gradient(to top, rgba(179, 229, 252, 0.9) 55%, transparent 55%);
+      padding: 0.02em 0.14em;
+    }
+
+    .hl-pink {
+      background: linear-gradient(to top, rgba(255, 205, 210, 0.9) 55%, transparent 55%);
+      padding: 0.02em 0.14em;
+    }
+
+    .note-sticky {
+      background: #fff4cc;
+      box-shadow: 6px 10px 32px rgba(17, 24, 39, 0.16);
+      transform: rotate(-2deg);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .note-sticky::after {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 26px;
+      width: 48px;
+      height: 18px;
+      background: rgba(255, 100, 100, 0.22);
+      transform: rotate(-4deg);
+      border-radius: 12px;
+    }
+
+    .washi-strip {
+      position: absolute;
+      top: -12px;
+      left: 16%;
+      right: 16%;
+      height: 28px;
+      background: repeating-linear-gradient(135deg, rgba(255, 236, 179, 0.75) 0 16px, rgba(200, 230, 201, 0.75) 16px 32px, rgba(255, 205, 210, 0.75) 32px 48px, rgba(225, 245, 254, 0.75) 48px 64px);
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
+      border-radius: 12px;
+      transform: rotate(-1deg);
+    }
+
+    /* .scribble-underline.sg-ink { background-image: url("data:image/svg+xml,%3Csvg width='300' height='16' viewBox='0 0 214 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 9c45-6 74-6 118-2s51-7 88-6' fill='none' stroke='%232b7fc3' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); } */
+    .scribble-underline {
+      background-image: url("data:image/svg+xml,%3Csvg width='300' height='12' viewBox='0 0 214 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 10C41 4 79 4 118 6c39 2 58-3 94-4' fill='none' stroke='%23fb7185' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 0 100%;
+      background-size: 100% 1em;
+    }
+
+    .sg-quote {
+      border: 2px solid #b47bde;
+      border-radius: 24px;
+      padding: 16px 18px;
+      background: #fffaf3;
+      color: #374151;
+      box-shadow: 0 14px 32px rgba(17, 24, 39, 0.12);
+    }
+
+    .scribble-underline {
+      background-image: url("data:image/svg+xml,%3Csvg width='300' height='12' viewBox='0 0 214 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 10C41 4 79 4 118 6c39 2 58-3 94-4' fill='none' stroke='%23fb7185' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 0 100%;
+      background-size: 100% 0.9em;
+      padding-bottom: 0.2rem;
+    }
+
+    /* Sketch card style compatible with Studygram */
+    .sketch-card {
+      position: relative;
+      background: #fff;
+    }
+
+    .sketch-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .sketch-content {
+      position: relative;
+      z-index: 2;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root" class="text-slate-900"></div>
+  <script type="module" src="/src/main.tsx"></script>
+  <script>
+    // Enhance elements with hand-drawn borders using Rough.js
+    function drawSketchBorders() {
+      const cards = document.querySelectorAll('.sketch-card');
+      cards.forEach((card) => {
+        const svg = card.querySelector('svg.sketch-canvas');
+        if (!svg) return;
+        const rect = card.getBoundingClientRect();
+        svg.setAttribute('width', rect.width);
+        svg.setAttribute('height', rect.height);
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        const rc = rough.svg(svg);
+        const opts = { roughness: 1.8, bowing: 1.4, stroke: '#2c3e50', strokeWidth: 2 };
+        const node = rc.rectangle(3, 3, rect.width - 6, rect.height - 6, opts);
+        const node2 = rc.rectangle(3, 3, rect.width - 6, rect.height - 6, { ...opts, roughness: 2.4, stroke: '#36495e' });
+        svg.appendChild(node);
+        svg.appendChild(node2);
+      });
+    }
+    // Initial draw and on resize
+    window.addEventListener('load', drawSketchBorders);
+    window.addEventListener('resize', drawSketchBorders);
+  </script>
+</body>
+
+</html>
