@@ -1,4 +1,5 @@
 import heroImage from "./assets/image.jpg";
+import { studygramSystemPrompt } from "./prompt";
 
 const palette = [
 	{ name: "Paper Cream", hex: "#FFF7EA" },
@@ -48,28 +49,130 @@ const pillars = [
 		title: "Chất liệu & nền",
 		body: "Dot-grid, kẻ ô, kraft paper. Tránh trắng tinh, thêm grain nhẹ để giống giấy thật.",
 		bg: "from-amber-300 to-rose-300",
+		shadow: "shadow-amber",
 	},
 	{
 		letter: "B",
 		title: "Bố cục",
 		body: "Organized chaos: có lưới, có xoay lệch 1–3°, block rõ ràng, khoảng thở rộng.",
 		bg: "from-sky-300 to-emerald-300",
+		shadow: "shadow-sky",
 	},
 	{
 		letter: "C",
 		title: "Typography",
 		body: "Calligraphy cho H1, handwriting cho H2, rounded cho body. Thêm underline marker và chữ in hoa nhỏ.",
 		bg: "from-rose-300 to-violet-300",
+		shadow: "shadow-rose",
 	},
 	{
 		letter: "D",
 		title: "Màu & ánh sáng",
 		body: "Pastel ấm, ánh sáng diffuse như cửa sổ. Shadow mềm, tán rộng, không cứng.",
 		bg: "from-emerald-300 to-amber-300",
+		shadow: "shadow-emerald",
+	},
+];
+
+const roadmap = [
+	{
+		phase: "Tuần 4",
+		title: "Claude Agent Skills + MCP server",
+		body: "Tối ưu prompt cho Claude code và các IDE khác bằng MCP servers.",
+		tag: "Claude Code",
+		lane: "To Do",
+		accent: "bg-rose-100/90 text-rose-900 ring-rose-200/70",
+		shadow: "shadow-rose",
+	},
+	{
+		phase: "Tuần 3",
+		title: "Micro interaction",
+		body: "Thêm animation nhẹ: float, fade-in, press effect cho hand-button; tinh chỉnh shadow.",
+		tag: "Motion",
+		lane: "To Do",
+		accent: "bg-rose-100/90 text-rose-900 ring-rose-200/70",
+		shadow: "shadow-rose",
+	},
+	{
+		phase: "Tuần 2",
+		title: "Layout & component",
+		body: "Thiết kế thêm components, section grid, checklist, ...",
+		tag: "Layout",
+		lane: "Đang làm",
+		accent: "bg-sky-100/90 text-sky-900 ring-sky-200/70",
+		shadow: "shadow-sky",
+	},
+	{
+		phase: "Tuần 1",
+		title: "Cố định phong cách",
+		body: "Chốt palette, font, texture giấy; tạo 2–3 card mẫu (hand-card, sticky note) để tái dùng.",
+		tag: "Foundation",
+		lane: "Đang làm",
+		accent: "bg-amber-100/90 text-amber-900 ring-amber-200/70",
+		shadow: "shadow-amber",
+	},
+	{
+		phase: "Tuần 0",
+		title: "Tạo phiên bản system prompt đầu tiên",
+		body: "Thử nghiệm trên các model AI để tạo UI Studygram; tinh chỉnh prompt để có kết quả tốt nhất.",
+		tag: "QA / Release",
+		lane: "Done",
+		accent: "bg-emerald-100/90 text-emerald-900 ring-emerald-200/70",
+		shadow: "shadow-emerald",
+	},
+];
+
+const roadmapColumns = [
+	{
+		title: "To Do",
+		badge: "bg-amber-100/90 text-amber-900 ring-amber-200/70",
+		tape: "bg-amber-200/70",
+		cardBg: "#fff9c4",
+		dot: "bg-amber-500",
+	},
+	{
+		title: "Đang làm",
+		badge: "bg-sky-100/90 text-sky-900 ring-sky-200/70",
+		tape: "bg-sky-200/70",
+		cardBg: "#b3e5fc",
+		dot: "bg-sky-500",
+	},
+	{
+		title: "Done",
+		badge: "bg-emerald-100/90 text-emerald-900 ring-emerald-200/70",
+		tape: "bg-emerald-200/70",
+		cardBg: "#e8f5e9",
+		dot: "bg-emerald-500",
 	},
 ];
 
 export default function App() {
+	const handleCopyPrompt = async () => {
+		const text = studygramSystemPrompt.trim();
+
+		try {
+			if (navigator?.clipboard?.writeText) {
+				await navigator.clipboard.writeText(text);
+				return;
+			}
+		} catch (error) {
+			console.error(
+				"Clipboard API failed, falling back to textarea copy.",
+				error,
+			);
+		}
+
+		// Fallback: temporary textarea copy for older browsers
+		const textarea = document.createElement("textarea");
+		textarea.value = text;
+		textarea.style.position = "fixed";
+		textarea.style.opacity = "0";
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand("copy");
+		document.body.removeChild(textarea);
+	};
+
 	return (
 		<div className="min-h-screen w-full text-ink">
 			<header className="sticky top-0 z-30 border-b border-slate-200/80 bg-[#fff7ea]/90 backdrop-blur">
@@ -79,7 +182,9 @@ export default function App() {
 							sg
 						</div>
 						<div className="leading-tight">
-							<p className="font-display text-2xl font-semibold">Studygram</p>
+							<p className="font-display text-2xl font-semibold">
+								Studygram Kit
+							</p>
 							<p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
 								Creative & Colorful Notes
 							</p>
@@ -90,33 +195,36 @@ export default function App() {
 							{ href: "#hero", label: "Hero" },
 							{ href: "#pillars", label: "4 trụ cột" },
 							{ href: "#palette", label: "Palette" },
-							{ href: "#steps", label: "Checklist" },
+							{ href: "#typo", label: "Typograpyh" },
 						].map((item, i) => (
 							<a
 								key={item.href}
 								href={item.href}
-								className={`font-note inline-flex items-center rounded-lg px-3 py-1.5 shadow-sm ring-1 ring-slate-200/80 bg-white/90 hover:-translate-y-0.5 transition ${i % 2 === 0 ? "rotate-[-2deg]" : "rotate-[2deg]"
-									}`}
+								className={`font-note inline-flex items-center rounded-lg px-3 py-1.5 shadow-sm ring-1 ring-slate-200/80 bg-white/90 hover:-translate-y-0.5 transition ${
+									i % 2 === 0 ? "-rotate-2" : "rotate-2"
+								}`}
 							>
-								<span className="text-[11px] uppercase tracking-[0.18em]">{item.label}</span>
+								<span className="text-[11px] uppercase tracking-[0.18em]">
+									{item.label}
+								</span>
 							</a>
 						))}
 					</nav>
 				</div>
 			</header>
 
-			<main
-				className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24"
-				id="hero"
-			>
-				<section className="grid gap-8 lg:grid-cols-[1.2fr_0.9fr] lg:items-center">
+			<main className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24">
+				<section
+					id="hero"
+					className="section-frame grid gap-8 lg:grid-cols-[1.2fr_0.9fr] lg:items-center"
+				>
 					<div className="space-y-4">
 						<div className="inline-flex items-center gap-2 rounded-full bg-white/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 shadow-sm ring-1 ring-slate-200/90 backdrop-blur">
 							Studygram notebook UI • V0.0.1
 						</div>
 						<h1 className="max-w-2xl font-hand text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-							Biến kiến thức khô khan thành
-							<span className="scribble-underline"> tác phẩm nghệ thuật</span>
+							Từ prompt đến UI chuẩn
+							<span className="scribble-underline"> Studygram</span>
 						</h1>
 						<p className="max-w-xl text-base leading-relaxed text-slate-700">
 							Thay vì card corporate, layout này dùng giấy dot-grid, washi tape,
@@ -130,13 +238,26 @@ export default function App() {
 							<span className="rounded-full bg-rose-100/90 px-3 py-1 font-semibold uppercase tracking-[0.16em] text-rose-900 ring-1 ring-rose-200/70">
 								Dot-grid paper
 							</span>
+							<span className="rounded-full bg-green-100/90 px-3 py-1 font-semibold uppercase tracking-[0.16em] text-green-900 ring-1 ring-green-200/70">
+								Polaroid
+							</span>
 							<span className="rounded-full bg-sky-100/90 px-3 py-1 font-semibold uppercase tracking-[0.16em] text-sky-900 ring-1 ring-sky-200/70">
 								Washi + tape
 							</span>
 						</div>
+
+						{/* Actions */}
+						<div className="flex flex-wrap gap-3">
+							<button
+								type="button"
+								className="hand-button bg-amber-200 text-amber-900"
+								onClick={handleCopyPrompt}
+							>
+								Copy Studygram prompt
+							</button>
+						</div>
 					</div>
 
-					{/* Hero right as polaroid */}
 					{/* Hero right as polaroid */}
 					<div className="relative max-sm:mt-8 max-sm:mb-8">
 						<div className="washi-tape z-20"></div>
@@ -144,45 +265,190 @@ export default function App() {
 							<img
 								src={heroImage}
 								alt="Studygram Vibes"
-								className="w-full h-auto rounded-[2px] block aspect-[4/3] object-cover bg-gray-50 grayscale-[10%] hover:grayscale-0 transition"
+								className="w-full h-auto rounded-[2px] block aspect-4/3 object-cover bg-gray-50 grayscale-10 hover:grayscale-0 transition"
 							/>
-							<div className="absolute bottom-5 left-0 right-0 text-center font-hand text-gray-500 text-xl tracking-wider opacity-80 rotate-[-1deg]">
-								Trừ khi bạn dùng Studygram 😏
+							<div className="absolute bottom-5 left-0 right-0 text-center font-hand text-gray-500 text-xl tracking-wider opacity-80 -rotate-1">
+								Trừ khi bạn dùng Studygram kit 😏
 							</div>
 						</div>
 					</div>
 				</section>
 
-				<section id="pillars" className="mt-12">
-					<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-						<div>
+				<section
+					id="roadmap"
+					className="section-frame relative mt-12 overflow-hidden rounded-3xl border border-slate-200/70 bg-[#fffaf3]/95 p-5 shadow-sm"
+				>
+					<div className="pointer-events-none absolute inset-0 dot-grid opacity-50"></div>
+					<div className="pointer-events-none absolute -left-24 top-10 h-44 w-44 rotate-12 rounded-full bg-linear-to-br from-amber-100/70 via-pink-100/60 to-sky-100/70 blur-3xl"></div>
+					<div className="pointer-events-none absolute bottom-2 right-0 h-52 w-52 -rotate-6 rounded-full bg-linear-to-br from-emerald-100/60 via-amber-100/60 to-rose-100/60 blur-2xl"></div>
+
+					<div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+						<div className="space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+								Roadmap
+							</p>
+							<h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+								Tiến độ dựng Studygram kit
+							</h2>
+						</div>
+						<div className="inline-flex items-center gap-2 rounded-full bg-amber-100/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-900 ring-1 ring-amber-200/70 shadow-sm">
+							<span className="w-2 h-2 rounded-full bg-amber-500"></span>
+							Update hàng tuần
+						</div>
+					</div>
+					<div className="relative mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+						{roadmapColumns.map((lane) => {
+							const laneItems = roadmap.filter(
+								(item) => item.lane === lane.title,
+							);
+
+							return (
+								<article
+									key={lane.title}
+									className="relative rounded-2xl border-2 border-dashed border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur"
+								>
+									<div
+										className={`absolute left-6 -top-3 h-6 w-16 rotate-[-4deg] rounded ${lane.tape} shadow-sm ring-1 ring-slate-200/60`}
+									></div>
+									<header className="flex items-start justify-between gap-2">
+										<div className="space-y-1">
+											<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Kanban • {lane.title}
+											</p>
+										</div>
+										<span
+											className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ring-1 shadow-sm ${lane.badge}`}
+										>
+											{laneItems.length} việc
+										</span>
+									</header>
+
+									<div className="mt-3 space-y-3">
+										{laneItems.map((item) => (
+											<div
+												key={item.phase}
+												className="sticky-note"
+												style={{ backgroundColor: lane.cardBg }}
+											>
+												<div className={`washi-tape ${lane.tape}`}></div>
+												<div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600">
+													<span className="inline-flex items-center gap-2">
+														<span
+															className={`h-2 w-2 rounded-full ${lane.dot}`}
+														></span>
+														{item.phase}
+													</span>
+													<span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 ring-1 ring-slate-200/60 shadow-sm">
+														{lane.title}
+													</span>
+												</div>
+												<h4 className="mt-2 font-display text-lg font-semibold text-ink">
+													{item.title}
+												</h4>
+												<p
+													className={`mt-1 text-sm leading-relaxed text-slate-700 ${
+														lane.title === "Done"
+															? "line-through text-slate-500"
+															: ""
+													}`}
+												>
+													{item.body}
+												</p>
+												<div className="mt-2 flex flex-wrap gap-2 text-[11px] font-semibold text-slate-600">
+													<span
+														className={`rounded-full px-2 py-0.5 ring-1 ring-slate-200/70 shadow-sm ${item.accent}`}
+													>
+														{item.tag}
+													</span>
+													<span className="rounded-full bg-white/80 px-2 py-0.5 ring-1 ring-slate-200/60 shadow-sm">
+														Owner: Design
+													</span>
+													<span className="rounded-full bg-white/80 px-2 py-0.5 ring-1 ring-slate-200/60 shadow-sm">
+														Check-in: T6
+													</span>
+												</div>
+											</div>
+										))}
+										{laneItems.length === 0 && (
+											<div className="rounded-xl bg-white/80 p-3 text-[12px] text-slate-600 ring-1 ring-slate-200/70 shadow-sm">
+												<p className="font-semibold text-slate-700">
+													Đang trống
+												</p>
+												<p>Thêm nhiệm vụ mới khi sẵn sàng.</p>
+											</div>
+										)}
+									</div>
+								</article>
+							);
+						})}
+					</div>
+				</section>
+
+				<section
+					id="pillars"
+					className="section-frame relative mt-12 overflow-hidden rounded-3xl border border-slate-200/70 bg-[#fffaf3]/95 p-5 shadow-sm"
+				>
+					<div className="pointer-events-none absolute inset-0 dot-grid opacity-40"></div>
+					<div className="pointer-events-none absolute -left-20 top-10 h-40 w-40 rotate-12 rounded-full bg-linear-to-br from-amber-100/70 via-pink-100/60 to-sky-100/70 blur-3xl"></div>
+					<div className="pointer-events-none absolute bottom-0 right-0 h-52 w-52 -rotate-6 rounded-full bg-linear-to-br from-emerald-100/60 via-amber-100/60 to-rose-100/60 blur-2xl"></div>
+
+					<div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+						<div className="space-y-3">
 							<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
 								Visual identity
 							</p>
 							<h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-								4 trụ cột Studygram “đúng bản sắc”
+								4 trụ cột Studygram{" "}
+								<span className="scribble-underline">“đúng bản sắc”</span>
 							</h2>
 							<p className="max-w-2xl text-sm text-slate-700">
 								Xây nền analog, giữ lưới nhưng cho phép lệch nhẹ, ưu tiên
 								handwriting và highlight thật. Mỗi trụ cột là một lớp của trang
 								vở.
 							</p>
+							<div className="flex flex-wrap gap-2 text-[11px] font-semibold text-slate-600">
+								{[
+									{ label: "Analog paper", color: "bg-amber-100/90" },
+									{ label: "Pastel marker", color: "bg-rose-100/90" },
+									{ label: "Handwritten type", color: "bg-sky-100/90" },
+									{ label: "Washi + sticker", color: "bg-emerald-100/90" },
+								].map((chip, i) => (
+									<span
+										key={chip.label}
+										className={`inline-flex items-center gap-1 rounded-full px-3 py-1 ring-1 ring-slate-200/70 shadow-sm ${chip.color} ${
+											i % 2 === 0 ? "rotate-[-1.5deg]" : "rotate-[1.5deg]"
+										}`}
+									>
+										<span className="h-2 w-2 rounded-full bg-ink/70"></span>
+										{chip.label}
+									</span>
+								))}
+							</div>
 						</div>
-						<div className="relative rounded-xl bg-rose-50 px-3 py-2 text-[11px] font-semibold text-rose-900 shadow-sm ring-1 ring-rose-200/70">
-							<span className="absolute -left-4 -top-3 rotate-[-6deg] rounded bg-amber-200 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-amber-900 shadow">
-								Tip
-							</span>
-							Đừng dùng quá 3 font, và luôn có 1 màu mực đậm để neo mắt.
+						<div className="relative w-full max-w-xs self-start">
+							<div className="sticky-note note-pink rotate-right">
+								<div className="sticky-pin"></div>
+								<h3 className="font-display text-lg font-semibold text-rose-700">
+									Đừng quên 🎯
+								</h3>
+								<p className="mt-2 text-sm text-slate-700">
+									• 3 font tối đa. <br />• 1 màu mực đậm. <br />• Shadow lệch
+									thủ công, không blur mạnh.
+								</p>
+							</div>
 						</div>
 					</div>
 
-					<div className="mt-6 grid gap-4 md:grid-cols-2">
-						{pillars.map((item) => (
+					<div className="relative mt-7 grid gap-4 md:grid-cols-2">
+						{pillars.map((item, idx) => (
 							<article
 								key={item.letter}
-								className="hand-card bg-dot-grid relative overflow-hidden p-5"
+								className={`hand-card ${item.shadow} bg-dot-grid relative overflow-hidden p-5 ${
+									idx % 2 === 0 ? "rotate-[-1.5deg]" : "rotate-[1.5deg]"
+								}`}
 							>
-								<span className="hand-card-inner"></span>
+								<div className="absolute left-5 -top-4 h-6 w-20 rotate-[-5deg] rounded bg-white/70 shadow-sm ring-1 ring-slate-200/60"></div>
+								<div className="absolute right-6 -bottom-4 h-5 w-16 rotate-3 rounded bg-amber-200/60 shadow-sm ring-1 ring-amber-200/60"></div>
 								<div className="pointer-events-none absolute -right-12 top-6 h-24 w-24 rotate-6 rounded-3xl bg-linear-to-br from-amber-100/70 via-pink-100/60 to-sky-100/70 opacity-80 blur-xl"></div>
 								<div className="hand-card-content">
 									<header className="relative flex items-start gap-3">
@@ -225,7 +491,7 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="palette" className="mt-12">
+				<section id="palette" className="section-frame mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
 							Palette • bút nhớ + mực
@@ -276,7 +542,7 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="typo" className="mt-12">
+				<section id="typo" className="section-frame mt-12">
 					<h2 className="uppercase font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl mb-4">
 						Typography mẫu
 					</h2>
@@ -345,7 +611,7 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="sticky-notes" className="mt-12">
+				<section id="sticky-notes" className="section-frame mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
 							Sticky note + washi tape
@@ -389,7 +655,7 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="hand-card" className="mt-12">
+				<section id="hand-card" className="section-frame mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
 							Hand card méo viền
@@ -397,15 +663,26 @@ export default function App() {
 						<h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
 							Card vẽ tay, viền đậm và nền dot-grid
 						</h2>
-						<p className="max-w-2xl text-sm text-slate-700">
-							Dùng cho quote, callout, hoặc khung nội dung đặc biệt. Viền đậm
-							3px, shadow đen lệch, viền nét đứt bên trong.
-						</p>
 					</div>
 					<div className="mt-5 grid gap-4 sm:grid-cols-2">
 						<div className="hand-card bg-dot-grid p-5">
 							<span className="hand-card-inner"></span>
 							<div className="hand-card-content space-y-2">
+								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+									Studygram note
+								</p>
+								<h3 className="font-display text-2xl text-ink">
+									Checklist layout
+								</h3>
+								<ul className="list-disc pl-5 text-sm text-slate-700">
+									<li>Heading Pacifico + underline scribble</li>
+									<li>Highlight vàng/mint cho keyword</li>
+									<li>Washi tape hoặc sticker neo góc</li>
+								</ul>
+							</div>
+						</div>
+						<div className="paper-card p-5 rounded-2xl">
+							<div className="space-y-2">
 								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
 									Studygram note
 								</p>
@@ -443,7 +720,7 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="steps" className="mt-12">
+				{/* <section id="steps" className="mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
 							Quy trình 5 bước
@@ -475,7 +752,7 @@ export default function App() {
 							</div>
 						))}
 					</div>
-				</section>
+				</section> */}
 			</main>
 
 			<footer className="border-t border-slate-200/70 bg-[#fff7ea]/90 py-6 text-center text-[11px] text-slate-600 backdrop-blur">
