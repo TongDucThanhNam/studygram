@@ -1,5 +1,10 @@
-import heroImage from "./assets/image.jpg";
-import { studygramSystemPrompt } from "./prompt";
+"use client";
+
+import { useState } from "react";
+
+import { studygramSystemPrompt } from "../lib/prompt";
+
+const heroImage = "/assets/studygram-hero.jpg";
 
 const palette = [
 	{ name: "Paper Cream", hex: "#FFF7EA" },
@@ -9,39 +14,6 @@ const palette = [
 	{ name: "Sky", hex: "#D8E9FF" },
 	{ name: "Ink", hex: "#1F2937" },
 ];
-
-// const steps = [
-// 	{
-// 		num: "01",
-// 		title: "Xác định mục tiêu",
-// 		body: "Trang này để ôn gì? Bullet keypoint hay flashcard? Viết mục tiêu lên đầu trang để giữ focus.",
-// 		color: "bg-amber-200 text-amber-900",
-// 	},
-// 	{
-// 		num: "02",
-// 		title: "Chọn palette",
-// 		body: "2–3 màu pastel cố định + màu mực đậm. Đừng đổi màu mỗi đoạn kẻo loạn.",
-// 		color: "bg-rose-200 text-rose-900",
-// 	},
-// 	{
-// 		num: "03",
-// 		title: "Kẻ layout",
-// 		body: "Phác nhanh block heading, body, hình, quote. Xoay nhẹ 1–2 block để có cảm giác handmade.",
-// 		color: "bg-sky-200 text-sky-900",
-// 	},
-// 	{
-// 		num: "04",
-// 		title: "Viết + highlight",
-// 		body: "Viết nội dung trước, highlight sau. Dùng 1 màu highlight cho keyword chính để mắt đỡ mệt.",
-// 		color: "bg-emerald-200 text-emerald-900",
-// 	},
-// 	{
-// 		num: "05",
-// 		title: "Doodle + tape",
-// 		body: "Thêm tape, sticker, doodle nhỏ dẫn mắt. Ít mà chất, không rải sticker vô tội vạ.",
-// 		color: "bg-violet-200 text-violet-900",
-// 	},
-// ];
 
 const pillars = [
 	{
@@ -146,7 +118,30 @@ const roadmapColumns = [
 	},
 ];
 
-export default function App() {
+export default function Page() {
+	const [copiedHex, setCopiedHex] = useState<string | null>(null);
+
+	const handleCopyHex = async (hex: string) => {
+		try {
+			if (navigator?.clipboard?.writeText) {
+				await navigator.clipboard.writeText(hex);
+			} else {
+				const textarea = document.createElement("textarea");
+				textarea.value = hex;
+				textarea.style.position = "fixed";
+				textarea.style.opacity = "0";
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand("copy");
+				document.body.removeChild(textarea);
+			}
+			setCopiedHex(hex);
+			window.setTimeout(() => setCopiedHex(null), 1400);
+		} catch (error) {
+			console.error("Failed to copy hex", error);
+		}
+	};
+
 	const handleCopyPrompt = async () => {
 		const text = studygramSystemPrompt.trim();
 
@@ -162,7 +157,6 @@ export default function App() {
 			);
 		}
 
-		// Fallback: temporary textarea copy for older browsers
 		const textarea = document.createElement("textarea");
 		textarea.value = text;
 		textarea.style.position = "fixed";
@@ -246,11 +240,10 @@ export default function App() {
 							</span>
 						</div>
 
-						{/* Actions */}
 						<div className="flex flex-wrap gap-3">
 							<button
 								type="button"
-								className="hand-button bg-green-500/90 text-yellow-400 "
+								className="hand-button bg-green-500/90 text-yellow-400"
 								onClick={handleCopyPrompt}
 							>
 								Copy Studygram prompt Free
@@ -258,9 +251,7 @@ export default function App() {
 						</div>
 					</div>
 
-					{/* Hero right as polaroid */}
 					<div className="relative max-sm:mt-8 max-sm:mb-8">
-						<div className="washi-tape z-20"></div>
 						<div className="p-3 pb-16 bg-white shadow-xl rotate-2 hover:rotate-1 transition duration-500 rounded-[2px] border border-gray-100 relative z-10">
 							<img
 								src={heroImage}
@@ -330,7 +321,6 @@ export default function App() {
 												className="sticky-note"
 												style={{ backgroundColor: lane.cardBg }}
 											>
-												<div className={`washi-tape ${lane.tape}`}></div>
 												<div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600">
 													<span className="inline-flex items-center gap-2">
 														<span
@@ -447,8 +437,6 @@ export default function App() {
 									idx % 2 === 0 ? "rotate-[-1.5deg]" : "rotate-[1.5deg]"
 								}`}
 							>
-								<div className="absolute left-5 -top-4 h-6 w-20 rotate-[-5deg] rounded bg-white/70 shadow-sm ring-1 ring-slate-200/60"></div>
-								<div className="absolute right-6 -bottom-4 h-5 w-16 rotate-3 rounded bg-amber-200/60 shadow-sm ring-1 ring-amber-200/60"></div>
 								<div className="pointer-events-none absolute -right-12 top-6 h-24 w-24 rotate-6 rounded-3xl bg-linear-to-br from-amber-100/70 via-pink-100/60 to-sky-100/70 opacity-80 blur-xl"></div>
 								<div className="hand-card-content">
 									<header className="relative flex items-start gap-3">
@@ -505,39 +493,91 @@ export default function App() {
 						</p>
 					</div>
 
-					<div className="mt-5 grid gap-3 sm:grid-cols-3">
-						<div className="rounded-2xl bg-white/90 p-4 shadow-sm ring-1 ring-slate-200/80">
-							<p className="text-sm font-semibold text-ink">Color chips</p>
-							<div className="mt-3 grid grid-cols-3 gap-3">
-								{palette.map((c) => (
-									<div
-										key={c.hex}
-										className="flex flex-col items-center gap-1 text-[11px] text-slate-600"
-									>
-										<div
-											className="h-12 w-12 rounded-full shadow-sm ring-1 ring-slate-200/70"
-											style={{ backgroundColor: c.hex }}
-										></div>
-										<span className="font-semibold text-slate-700">
-											{c.name}
-										</span>
-										<span className="text-[10px] text-slate-500">{c.hex}</span>
-									</div>
-								))}
+					<div className="mt-6 grid gap-4 sm:grid-cols-3">
+						<article className="hand-card bg-dot-grid p-4">
+							<div className="hand-card-inner" />
+							<div className="hand-card-content">
+								<header className="flex items-start justify-between gap-2">
+									<p className="text-sm font-semibold text-ink">Color chips</p>
+									<span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600 ring-1 ring-slate-200/70">
+										Tap to copy
+									</span>
+								</header>
+								<ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+									{palette.map((c, i) => (
+										<li key={c.hex}>
+											<button
+												type="button"
+												onClick={() => handleCopyHex(c.hex)}
+												className={`group flex w-full flex-col items-center gap-1 rounded-xl bg-white/85 px-2 py-2 text-[11px] text-slate-600 shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-md ${
+													i % 2 === 0 ? "-rotate-1" : "rotate-1"
+												}`}
+												aria-label={`Copy ${c.name} hex ${c.hex}`}
+											>
+												<div
+													className="relative h-12 w-12 rounded-full shadow-sm ring-1 ring-slate-200/70"
+													style={{ backgroundColor: c.hex }}
+												>
+													{copiedHex === c.hex && (
+														<span className="absolute -right-2 -top-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[9px] font-semibold text-emerald-900 shadow ring-1 ring-emerald-200/70">
+															Copied
+														</span>
+													)}
+												</div>
+												<span className="mt-0.5 font-semibold text-slate-700">
+													{c.name}
+												</span>
+												<span className="text-[10px] text-slate-500">
+													{c.hex}
+												</span>
+											</button>
+										</li>
+									))}
+								</ul>
 							</div>
-						</div>
-						<div className="polaroid relative rounded-2xl p-4">
-							<p className="font-display text-2xl font-semibold">
+						</article>
+
+						<aside className="sticky-note rounded-hand relative p-5 text-left text-slate-800 shadow-md">
+							<p className="font-display text-2xl font-semibold text-ink">
 								Ink & highlight
 							</p>
-							<ul className="mt-2 space-y-1 text-sm text-slate-700">
-								<li>• Mực: #1F2937 hoặc nâu đậm, tạo neo tương phản.</li>
-								<li>• Highlight: vàng/peach/mint nhạt, phủ lên keyword.</li>
-								<li>
-									• Outline thủ công: dùng rough stroke/roughjs hoặc border dash
-									nhẹ.
-								</li>
+							<ul className="mt-3 space-y-2 text-sm leading-relaxed">
+								<li>• Chọn 2–3 pastel cố định + 1 màu mực đậm để neo mắt.</li>
+								<li>• Highlight sau khi viết, chỉ phủ keyword chính.</li>
+								<li>• Tránh pastel lạnh/xám; ưu tiên kem, peach, mint.</li>
 							</ul>
+						</aside>
+
+						<div className="polaroid relative rounded-2xl p-4">
+							<p className="text-sm font-semibold text-ink">Quick preview</p>
+							<div className="mt-3 space-y-3">
+								<div
+									className="rounded-2xl border border-slate-200/70 bg-[#fff7ea] p-3 shadow-inner"
+									style={{ backgroundColor: palette[0].hex }}
+								>
+									<p className="text-[12px] font-semibold text-ink">
+										Heading on paper
+									</p>
+									<p className="mt-1 text-[12px] leading-relaxed text-slate-700">
+										<span className="hl-yellow">keyword</span> trên nền giấy
+										kem, mực đậm, khoảng thở rộng.
+									</p>
+								</div>
+								<div className="grid grid-cols-3 gap-2">
+									{palette.slice(1, 4).map((c) => (
+										<div
+											key={c.hex}
+											className="rounded-xl px-2 py-2 text-center text-[11px] font-semibold text-ink shadow-sm ring-1 ring-slate-200/70"
+											style={{ backgroundColor: c.hex }}
+										>
+											{c.name.split(" ")[0]}
+										</div>
+									))}
+								</div>
+								<p className="text-[11px] text-slate-600">
+									Layer gợi ý: Paper → Pastel → Ink.
+								</p>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -563,8 +603,8 @@ export default function App() {
 											strokeLinejoin="round"
 										>
 											<title>Studygram layout summary</title>
-											<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path>
-											<path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path>
+											<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
+											<path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />
 										</svg>
 									</span>
 									<span className="legend-title">
@@ -591,7 +631,7 @@ export default function App() {
 								<span className="hl-yellow">highlight vàng</span>.
 							</p>
 
-							<h1 className=" sg-ink">Tiêu đề cấp 1</h1>
+							<h1 className="sg-ink">Tiêu đề cấp 1</h1>
 							<h2>Tiêu đề cấp 2</h2>
 							<h3>Tiêu đề cấp 3</h3>
 							<h4>Tiêu đề cấp 4</h4>
@@ -655,104 +695,288 @@ export default function App() {
 					</div>
 				</section>
 
-				<section id="hand-card" className="section-frame mt-12">
+				<section id="extras" className="section-frame mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-							Hand card méo viền
+							Studygram extras
 						</p>
 						<h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-							Card vẽ tay, viền đậm và nền dot-grid
+							Thêm “đồ nghề” để trang vở sống động
 						</h2>
+						<p className="max-w-2xl text-sm text-slate-700">
+							Những pattern nhỏ nhưng tạo vibe analog: badge, stamp, callout,
+							checklist, tab tay và divider kiểu bút dạ.
+						</p>
 					</div>
-					<div className="mt-5 grid gap-4 sm:grid-cols-2">
+
+					<div className="mt-6 grid gap-4 sm:grid-cols-3">
 						<div className="hand-card bg-dot-grid p-5">
-							<span className="hand-card-inner"></span>
-							<div className="hand-card-content space-y-2">
-								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-									Studygram note
+							<span className="hand-card-inner" />
+							<div className="hand-card-content space-y-3 text-left">
+								<div className="flex items-center justify-between">
+									<span className="badge-pill">Section</span>
+									<span className="stamp">A+</span>
+								</div>
+								<p className="text-sm text-slate-700">
+									Badge + stamp dùng để đánh dấu block quan trọng.
 								</p>
-								<h3 className="font-display text-2xl text-ink">
-									Checklist layout
-								</h3>
-								<ul className="list-disc pl-5 text-sm text-slate-700">
-									<li>Heading Pacifico + underline scribble</li>
-									<li>Highlight vàng/mint cho keyword</li>
-									<li>Washi tape hoặc sticker neo góc</li>
-								</ul>
+								<div className="sg-divider" />
+								<div className="tabs-hand">
+									<span className="tab-hand active">Notes</span>
+									<span className="tab-hand">Tasks</span>
+									<span className="tab-hand">Ideas</span>
+								</div>
 							</div>
 						</div>
-						<div className="paper-card p-5 rounded-2xl">
-							<div className="space-y-2">
-								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-									Studygram note
-								</p>
-								<h3 className="font-display text-2xl text-ink">
-									Checklist layout
-								</h3>
-								<ul className="list-disc pl-5 text-sm text-slate-700">
-									<li>Heading Pacifico + underline scribble</li>
-									<li>Highlight vàng/mint cho keyword</li>
-									<li>Washi tape hoặc sticker neo góc</li>
-								</ul>
+
+						<div className="callout callout-mint text-left">
+							<p className="text-sm font-semibold text-ink">Callout ghim kim</p>
+							<p className="mt-1 text-sm text-slate-700 leading-relaxed">
+								Đặt tip ở giữa trang, thêm “pin” đỏ để giống note dán lên giấy.
+							</p>
+							<div className="mt-2 flex items-center gap-2 text-[12px] text-slate-700">
+								<span className="hl-blue">định nghĩa</span>
+								<span className="doodle-arrow" />
+								<span className="hl-yellow">keyword</span>
 							</div>
 						</div>
-						<div
-							className="hand-card p-5"
-							style={{
-								boxShadow: "6px 6px 0px #ef4444",
-								borderColor: "#ef4444",
-							}}
-						>
-							<span className="hand-card-inner"></span>
-							<div className="hand-card-content space-y-2">
-								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-rose-600">
-									Quote
-								</p>
-								<p className="font-display text-xl text-ink scribble-underline sg-ink">
-									“Make studying cute enough that you want to come back.”
+
+						<div className="paper-card torn-edge rounded-2xl p-5 text-left shadow-sm ring-1 ring-slate-200/70">
+							<p className="text-sm font-semibold text-ink">Checklist tay</p>
+							<ul className="mt-3 checklist">
+								<li>
+									<span className="box checked" />
+									<span>Viết outline trước</span>
+								</li>
+								<li>
+									<span className="box" />
+									<span>Highlight sau khi viết</span>
+								</li>
+								<li>
+									<span className="box" />
+									<span>Thêm tape/sticker neo góc</span>
+								</li>
+							</ul>
+							<div className="relative mt-4 h-10">
+								<div className="washi-tape tape-amber left-1/2 top-2" />
+							</div>
+						</div>
+					</div>
+
+					<div className="mt-8 grid gap-4 sm:grid-cols-2">
+						<div className="relative hand-card bg-dot-grid p-5">
+							<span className="hand-card-inner" />
+							<div className="edge-tabs">
+								<div className="edge-tab tab-sky">Bio</div>
+								<div className="edge-tab tab-mint">Todo</div>
+								<div className="edge-tab tab-pink">Ref</div>
+							</div>
+							<div className="hand-card-content space-y-3 text-left">
+								<p className="text-sm font-semibold text-ink">
+									Page edge index tabs
 								</p>
 								<p className="text-sm text-slate-700">
-									Ghi chú: giữ khoảng thở, text trái, shadow mềm và màu mực đậm
-									để đọc rõ.
+									Dán mép trang để chia mục nhanh như vở thật.
+								</p>
+								<div className="flex items-center gap-2">
+									<span className="ribbon">Chapter 1</span>
+									<span className="sticker">
+										<span className="pin" />
+										Important
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<div className="grid gap-4 sm:grid-cols-2">
+							<figure className="photo-frame">
+								<img
+									src={heroImage}
+									alt="Study corner snapshot"
+									className="h-40 w-full rounded-xl object-cover"
+								/>
+								<figcaption className="photo-caption">
+									“Góc học” kiểu polaroid frame
+								</figcaption>
+								<div className="washi-tape tape-rose left-1/2 top-1" />
+							</figure>
+
+							<div className="flashcard-stack">
+								<div className="flashcard back-2" />
+								<div className="flashcard back-1" />
+								<div className="flashcard space-y-2 text-left">
+									<p className="text-sm font-semibold text-ink">
+										Flashcard stack
+									</p>
+									<p className="text-sm text-slate-700">
+										Q: Pastel highlight dùng khi nào?
+									</p>
+									<p className="text-sm text-slate-700">
+										A: <span className="hl-peach">sau khi viết</span>, chỉ nhấn{" "}
+										<span className="hl-mint">keyword</span>.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="mt-8 paper-card note-line rounded-2xl p-5 text-left shadow-inner ring-1 ring-slate-200/70">
+						<p className="text-sm font-semibold text-ink">Notebook timeline</p>
+						<div className="mt-3 notebook-timeline">
+							<div className="timeline-item">
+								<p className="text-sm font-semibold text-ink">
+									Bước 1: Outline
+								</p>
+								<p className="text-sm text-slate-700">
+									Chia block, kẻ lưới, chừa whitespace.
+								</p>
+							</div>
+							<div className="timeline-item">
+								<p className="text-sm font-semibold text-ink">
+									Bước 2: Viết nội dung
+								</p>
+								<p className="text-sm text-slate-700">
+									Mực đậm làm anchor cho mắt.
+								</p>
+							</div>
+							<div className="timeline-item">
+								<p className="text-sm font-semibold text-ink">
+									Bước 3: Highlight + doodle
+								</p>
+								<p className="text-sm text-slate-700">
+									Dùng 1–2 pastel cố định, không rải lung tung.
 								</p>
 							</div>
 						</div>
 					</div>
 				</section>
 
-				{/* <section id="steps" className="mt-12">
+				<section id="hand-card" className="section-frame mt-12">
 					<div className="flex flex-col gap-2">
 						<p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-							Quy trình 5 bước
+							Hand card méo viền
 						</p>
 						<h2 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-							Checklist biến layout cứng thành Studygram thật
+							Card Studygram: nhiều chất liệu khác nhau
 						</h2>
 					</div>
-					<div className="mt-5 grid gap-4 md:grid-cols-5">
-						{steps.map((step) => (
-							<div
-								key={step.num}
-								className="hand-card relative flex flex-col p-3 text-sm"
-							>
-								<span className="hand-card-inner"></span>
-								<div className="hand-card-content space-y-2">
-									<div className="flex items-center justify-between">
-										<span
-											className={`h-7 w-7 rounded-full text-center text-[11px] font-semibold shadow-sm ${step.color}`}
-										>
-											{step.num}
-										</span>
-										<span className="text-[10px] uppercase tracking-[0.18em] text-slate-400">
-											{step.title}
-										</span>
-									</div>
-									<p className="text-slate-700">{step.body}</p>
-								</div>
+					<div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						<div className="hand-card bg-dot-grid p-5">
+							<span className="hand-card-inner"></span>
+							<div className="hand-card-content space-y-2 text-left">
+								<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+									Hand-card classic
+								</p>
+								<h3 className="font-display text-2xl text-ink">
+									Dot-grid + viền đậm
+								</h3>
+								<ul className="list-disc pl-5 text-sm text-slate-700">
+									<li>Heading Pacifico + underline scribble</li>
+									<li>Highlight vàng/mint cho keyword</li>
+									<li>Washi tape hoặc sticker neo góc</li>
+								</ul>
 							</div>
-						))}
+						</div>
+
+						<div className="sg-card-soft text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Soft rounded
+							</p>
+							<h3 className="font-display text-xl text-ink">
+								Bo tròn + shadow mềm
+							</h3>
+							<p className="text-sm text-slate-700 leading-relaxed">
+								Dùng cho nội dung dài, nhẹ nhàng như giấy note mới.
+							</p>
+						</div>
+
+						<div className="sg-card-paper text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Lined paper
+							</p>
+							<h3 className="font-display text-xl text-ink">Nền giấy kẻ mờ</h3>
+							<p className="text-sm text-slate-700">Hợp checklist/summary.</p>
+						</div>
+
+						<div className="sg-card-lined text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Overlay lines
+							</p>
+							<h3 className="font-display text-xl text-ink">
+								Card có line overlay
+							</h3>
+							<p className="text-sm text-slate-700">
+								Line mờ phía sau text, nhìn như vở thật.
+							</p>
+						</div>
+
+						<div className="sg-card-torn torn-edge text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Torn paper
+							</p>
+							<h3 className="font-display text-xl text-ink">Mép giấy rách</h3>
+							<p className="text-sm text-slate-700">
+								Đặt quote hoặc tip nhỏ như xé từ vở ra.
+							</p>
+						</div>
+
+						<div className="sg-card-gradient text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Pastel gradient
+							</p>
+							<h3 className="font-display text-xl text-ink">
+								Nền pastel loang
+							</h3>
+							<p className="text-sm text-slate-700">Hợp card mở đầu section.</p>
+						</div>
+
+						<div className="sg-card-tabbed text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Tabbed card
+							</p>
+							<h3 className="font-display text-xl text-ink">Card có tab dán</h3>
+							<p className="text-sm text-slate-700">
+								Giống thẻ index trong sổ tay.
+							</p>
+						</div>
+
+						<div className="sg-card-quote text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-rose-600">
+								Quote
+							</p>
+							<p className="font-display text-lg text-ink scribble-underline sg-ink">
+								“Make studying cute enough that you want to come back.”
+							</p>
+							<p className="text-sm text-slate-700">
+								Quote card nhẹ với accent rose.
+							</p>
+						</div>
+
+						<div className="sg-card-glass text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+								Glassy paper
+							</p>
+							<h3 className="font-display text-xl text-ink">
+								Nền giấy mờ trong
+							</h3>
+							<p className="text-sm text-slate-700">
+								Đặt lên background có texture/dot-grid.
+							</p>
+						</div>
+
+						<div className="sg-card sg-card-accent-rose sg-card-compact text-left space-y-2">
+							<p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-rose-600">
+								Accent rose
+							</p>
+							<h3 className="font-display text-xl text-ink">
+								Viền & shadow màu
+							</h3>
+							<p className="text-sm text-slate-700">
+								Dùng cho trạng thái “important”.
+							</p>
+						</div>
 					</div>
-				</section> */}
+				</section>
 			</main>
 
 			<footer className="border-t border-slate-200/70 bg-[#fff7ea]/90 py-6 text-center text-[11px] text-slate-600 backdrop-blur">
